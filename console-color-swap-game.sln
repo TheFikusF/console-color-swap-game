@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.34916.146
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "console-color-swap-game", "console-color-swap-game\console-color-swap-game.csproj", "{39C7D101-66BF-43AB-8E49-85E3858AEE55}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{39C7D101-66BF-43AB-8E49-85E3858AEE55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39C7D101-66BF-43AB-8E49-85E3858AEE55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39C7D101-66BF-43AB-8E49-85E3858AEE55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39C7D101-66BF-43AB-8E49-85E3858AEE55}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F962D966-3E2D-4317-9098-8A6B6B67BD1F}
+	EndGlobalSection
+EndGlobal
