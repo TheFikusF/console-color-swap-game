@@ -1,19 +1,16 @@
-﻿using CCSG;
-using CCSG.Utils;
+﻿using System.CommandLine;
 using CCSG.View;
 
-int v = 14;
-if (args.Length > 1 && args[0] == "-v")
-{
-    v = int.Parse(args[1]);
-}
-
-int h = 4;
-if (args.Length > 3 && args[0] == "-h")
-{
-    h = int.Parse(args[1]);
-}
-
 Console.Clear();
-var game = new ConsoleView(v, h);
-ConsoleExtensions.ReadInput(game.HandleInput);
+var rootCommand = new RootCommand("Sample app for System.CommandLine");
+var countOption = new Option<int>(name: "--count", getDefaultValue: () => 14);
+var sizeOption = new Option<int>(name: "--size", getDefaultValue: () => 4);
+rootCommand.AddOption(countOption);
+rootCommand.AddOption(sizeOption);
+rootCommand.SetHandler((count, size) => 
+{
+    var game = new ConsoleView(count, size);
+    CCSG.Utils.ConsoleExtensions.ReadInput(game.HandleInput);
+}, countOption, sizeOption);
+
+rootCommand.InvokeAsync(args).Wait();
