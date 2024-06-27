@@ -89,7 +89,7 @@ namespace CCSG.Utils
         {
             if (!SetConsoleCursorPosition(_stdHandler, new COORD { X = (short)x, Y = (short)y }))
             {
-                throw new Exception("Failed to set cursor position");
+                //throw new Exception("Failed to set cursor position");
             }
         }
 

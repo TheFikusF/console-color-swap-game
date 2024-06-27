@@ -9,14 +9,17 @@ namespace CCSG.Core
         private int _hold;
         private int _holdPosition;
 
-        private bool _isCompleted = false;
+        private int _completedCount = 0;
+        private (int from, int to) _historyBuffer;
+        private Stack<(int from, int to)> _history;
     
         public int Hold => _hold;
         public int HoldPosition => _holdPosition;
         public int BeakersCount => _beakers.GetLength(0);
         public int BeakerCapacity => _beakers.GetLength(1);
         public int TargetFilledCount => BeakersCount - Consts.ADDITIONAL_BEAKERS;
-        public bool IsCompleted => _isCompleted;
+        public bool IsCompleted => _completedCount == TargetFilledCount;
+        public int CompletedCount => _completedCount;
 
         public int this[int x, int y]
         {
@@ -25,6 +28,7 @@ namespace CCSG.Core
 
         public Game(int count, int capcity)
         {
+            _history = new Stack<(int from, int to)>();
             Init(count, capcity);
         }
 
@@ -56,7 +60,7 @@ namespace CCSG.Core
             }
         }
 
-        public bool TryTake(int beakerIndex)
+        public bool TryTake(int beakerIndex, bool writeToHistory = true)
         {
             if(_hold != 0)
             {
@@ -69,13 +73,17 @@ namespace CCSG.Core
                 _hold = _beakers[beakerIndex, index.Value];
                 _beakers[beakerIndex, index.Value] = 0;
                 _holdPosition = beakerIndex;
+                if(writeToHistory)
+                {
+                    _historyBuffer.from = beakerIndex;
+                }
                 return true;
             }
             
             return false;
         }
 
-        public bool TryPut(int beakerIndex)
+        public bool TryPut(int beakerIndex, bool writeToHistory = true, bool force = false)
         {
             if(_hold == 0)
             {
@@ -84,15 +92,29 @@ namespace CCSG.Core
 
             int? index = GetHeighestInBeaker(beakerIndex);
             if (index.GetValueOrDefault(0) != BeakerCapacity - 1 
-                && (_holdPosition == beakerIndex || index.HasValue == false || _beakers[beakerIndex, index.Value] == _hold))
+                && (force == true || _holdPosition == beakerIndex || index.HasValue == false || _beakers[beakerIndex, index.Value] == _hold))
             {
                 _beakers[beakerIndex, index.GetValueOrDefault(-1) + 1] = _hold;
                 _hold = 0;
                 TryComplete();
+                if(_historyBuffer.from != beakerIndex && writeToHistory)
+                {
+                    _historyBuffer.to = beakerIndex;
+                    _history.Push(_historyBuffer);
+                }
                 return true;
             }
 
             return false;
+        }
+
+        public void Undo()
+        {
+            if (_history.TryPop(out var lastMove))
+            {
+                TryTake(lastMove.to, false);
+                TryPut(lastMove.from, false, true);
+            }
         }
 
         public int? GetHeighestInBeaker(int beakerIndex)
@@ -112,18 +134,24 @@ namespace CCSG.Core
 
         private void TryComplete()
         {
-            for(int i = 0; i < TargetFilledCount; i++)
+            _completedCount = 0;
+            for (int i = 0; i < BeakersCount; i++)
             {
+                var isCompleted = true;
                 for(int j = 0; j < BeakerCapacity - 1; j++)
                 {
-                    if (_beakers[i, j] != _beakers[i, j + 1])
+                    if (_beakers[i, j] != _beakers[i, j + 1] || _beakers[i, j] == 0)
                     {
-                        _isCompleted = false;
-                        return;
+                        isCompleted = false;
+                        break;
                     }
                 }
+
+                if(isCompleted)
+                {
+                    _completedCount++;
+                }
             }
-            _isCompleted = true;
         }
     }
 }
