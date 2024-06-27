@@ -51,7 +51,7 @@ namespace CCSG.View
             ConsoleExtensions.SetColors(ConsoleColor.White, ConsoleColor.Black);
             ConsoleExtensions.SetCursorPosition(0, 1);
             ConsoleExtensions.Write(new string('=', OFFSET_X * 7 * (_game.BeakerCapacity / 2) + 4));
-            ConsoleExtensions.SetCursorPosition(0, _game.BeakerCapacity * 5);
+            ConsoleExtensions.SetCursorPosition(0, _game.BeakerCapacity * 2 + OFFSET_Y * 3);
             ConsoleExtensions.Write("[a][d][w][s] - move, [space] - take/put, \n[u] - undo, [r] - restart");
 
             int offsetX2 = 0;
