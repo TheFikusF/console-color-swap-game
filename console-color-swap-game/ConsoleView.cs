@@ -10,15 +10,17 @@ namespace CCSG.View
         private int _prevIndex;
         private int _timer;
         private bool _interactable;
+        private bool _bottomUnknown;
         private Game _game;
         private CancellationTokenSource _cts;
 
         private const int OFFSET_X = 3;
         private const int OFFSET_Y = 4;
 
-        public ConsoleView(int count, int capacity)
+        public ConsoleView(int count, int capacity, bool bottomUnknown)
         {
-            _game = new Game(count, capacity);
+            _bottomUnknown = bottomUnknown;
+            _game = new Game(count, capacity, bottomUnknown);
             _cts = new CancellationTokenSource();
             InitDraw();
             Task.Run(() => Update(_cts.Token));
@@ -116,7 +118,7 @@ namespace CCSG.View
                     _timer = 0;
                     _cts.Cancel();
                     _cts = new CancellationTokenSource();
-                    _game = new Game(_game.BeakersCount, _game.BeakerCapacity);
+                    _game = new Game(_game.BeakersCount, _game.BeakerCapacity, _bottomUnknown);
                     Task.Run(() => Update(_cts.Token));
                     break;
             }
@@ -153,7 +155,7 @@ namespace CCSG.View
         {
             ConsoleExtensions.SetCursorPosition(0, 0);
             ConsoleExtensions.SetColors(ConsoleColor.White, ConsoleColor.Black);
-            ConsoleExtensions.Write($"DONE: {_game.CompletedCount}/{_game.TargetFilledCount}");
+            ConsoleExtensions.Write($"DONE: {_game.CompletedCount}/{_game.TargetFilledCount} ");
             ConsoleExtensions.SetCursorPosition(18, 0);
             ConsoleExtensions.Write($"TIME: {MathF.Floor((float)_timer/60):00}:{_timer % 60:00}");
 
@@ -204,6 +206,7 @@ namespace CCSG.View
             <= 6 => "()",
             <= 12 => "[]",
             <= 18 => "{}",
+            _ => "??",
         };
 
         private ConsoleColor GetColor(int number) => number switch
@@ -215,6 +218,7 @@ namespace CCSG.View
             4 or 10 or 16 => ConsoleColor.Cyan,
             5 or 11 or 17 => ConsoleColor.Magenta,
             6 or 12 or 18 => ConsoleColor.Green,
+            _ => ConsoleColor.White,
         };
     }
 }

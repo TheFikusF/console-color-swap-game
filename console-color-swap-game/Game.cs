@@ -5,6 +5,7 @@ namespace CCSG.Core
     public class Game
     {
         private int[,] _beakers;
+        private int[] _unknownBeakers;
 
         private int _hold;
         private int _holdPosition;
@@ -21,20 +22,22 @@ namespace CCSG.Core
         public bool IsCompleted => _completedCount == TargetFilledCount;
         public int CompletedCount => _completedCount;
 
+        public const int UNKNOWN_SYMBOL = 999;
         public int this[int x, int y]
         {
-            get => _beakers[x, y];
+            get => y < _unknownBeakers[x] ? UNKNOWN_SYMBOL : _beakers[x, y];
         }
 
-        public Game(int count, int capcity)
+        public Game(int count, int capcity, bool bottomUnknown)
         {
             _history = new Stack<(int from, int to)>();
-            Init(count, capcity);
+            Init(count, capcity, bottomUnknown);
         }
 
-        private void Init(int count, int capcity)
+        private void Init(int count, int capcity, bool bottomUnknown)
         {
             _beakers = new int[count, capcity];
+            _unknownBeakers = new int[count];
             var circlesBuffer = new int[TargetFilledCount * capcity];
 
             int n = 0;
@@ -52,6 +55,7 @@ namespace CCSG.Core
             n = 0;
             for(int i = 0; i < TargetFilledCount; i++)
             {
+                _unknownBeakers[i] = bottomUnknown ? BeakerCapacity - 1 : 0;
                 for (int j = 0; j < BeakerCapacity; j++)
                 {
                     _beakers[i, j] = circlesBuffer[n];
@@ -99,6 +103,7 @@ namespace CCSG.Core
                 TryComplete();
                 if(_historyBuffer.from != beakerIndex && writeToHistory)
                 {
+                    _unknownBeakers[_historyBuffer.from] = GetHeighestInBeaker(_historyBuffer.from) ?? 0;
                     _historyBuffer.to = beakerIndex;
                     _history.Push(_historyBuffer);
                 }
