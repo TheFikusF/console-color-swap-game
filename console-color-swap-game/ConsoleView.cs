@@ -51,8 +51,11 @@ namespace CCSG.View
             Console.Clear();
 
             ConsoleExtensions.SetColors(ConsoleColor.White, ConsoleColor.Black);
+            int count = OFFSET_X * 7 * (_game.BeakerCapacity / 2) + 4;
+            ConsoleExtensions.SetCursorPosition(0, 0);
+            ConsoleExtensions.Write($"║{new string(' ', count)}║");
             ConsoleExtensions.SetCursorPosition(0, 1);
-            ConsoleExtensions.Write(new string('=', OFFSET_X * 7 * (_game.BeakerCapacity / 2) + 4));
+            ConsoleExtensions.Write($"╚{new string('═', count)}╝");
             ConsoleExtensions.SetCursorPosition(0, _game.BeakerCapacity * 2 + OFFSET_Y * 3);
             ConsoleExtensions.Write("[a][d][w][s] - move, [space] - take/put, \n[u] - undo, [r] - restart");
 
@@ -153,7 +156,7 @@ namespace CCSG.View
 
         private void Draw()
         {
-            ConsoleExtensions.SetCursorPosition(0, 0);
+            ConsoleExtensions.SetCursorPosition(1, 0);
             ConsoleExtensions.SetColors(ConsoleColor.White, ConsoleColor.Black);
             ConsoleExtensions.Write($"DONE: {_game.CompletedCount}/{_game.TargetFilledCount} ");
             ConsoleExtensions.SetCursorPosition(18, 0);

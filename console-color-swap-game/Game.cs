@@ -96,14 +96,17 @@ namespace CCSG.Core
 
             int? index = GetHeighestInBeaker(beakerIndex);
             if (index.GetValueOrDefault(0) != BeakerCapacity - 1 
-                && (force == true || _holdPosition == beakerIndex || index.HasValue == false || _beakers[beakerIndex, index.Value] == _hold))
+                && (force == true || _holdPosition == beakerIndex 
+                || index.HasValue == false || _beakers[beakerIndex, index.Value] == _hold))
             {
                 _beakers[beakerIndex, index.GetValueOrDefault(-1) + 1] = _hold;
                 _hold = 0;
                 TryComplete();
                 if(_historyBuffer.from != beakerIndex && writeToHistory)
                 {
-                    _unknownBeakers[_historyBuffer.from] = GetHeighestInBeaker(_historyBuffer.from) ?? 0;
+                    _unknownBeakers[_historyBuffer.from] = 
+                        Math.Min(GetHeighestInBeaker(_historyBuffer.from) ?? 0, _unknownBeakers[_historyBuffer.from]);
+                    
                     _historyBuffer.to = beakerIndex;
                     _history.Push(_historyBuffer);
                 }
